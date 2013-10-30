@@ -17,6 +17,8 @@
  *	along with MappingCubed.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.github.redhatter.whitehouse;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
