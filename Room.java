@@ -25,12 +25,12 @@ import java.awt.Rectangle;
 
 public class Room extends Rectangle
 {
-	// Aditinal properties not contained in Rectangle
+	// Additional properties not contained in Rectangle
 	private String name;
 	private String desc;
 	public int z;
 	
-	// Flag to prevent multible paints per paint event
+	// Flag to prevent multiple paints per paint event
 	public boolean paint = false;
 
 	// List of things connected
