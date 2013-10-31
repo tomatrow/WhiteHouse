@@ -227,8 +227,9 @@ public class RoomManager
 		{
 			// Nothing needs to be created, move to room
 			final Room room = findRoom(name, desc);
-			if (room == location.getNeighbor(dir))
-				location = location.getNeighbor(dir);
+			final Room neighbor = location.getNeighbor(dir);
+			if (room == neighbor)
+				location = neighbor;
 			else
 			{
 				Display.getDefault().syncExec(new Runnable()
@@ -236,7 +237,7 @@ public class RoomManager
 					public void run()
 					{
 						MessageBox alert = new MessageBox(shell, SWT.YES|SWT.NO);
-						alert.setMessage("A room with the name '"+location.getNeighbor(dir).getName()+"' is already to the "+Compass.toString(dir)+", would you like to replace it with '"+name+"'?");
+						alert.setMessage("A room with the name '"+neighbor.getName()+"' is already to the "+Compass.toString(dir)+", would you like to replace it with '"+name+"'?");
 						if (alert.open() == SWT.YES)
 						{
 							if (room != null)
@@ -249,6 +250,9 @@ public class RoomManager
 								rooms.add(room);
 								room.setName(name);
 								room.setDesc(desc);
+								room.x = neighbor.x;
+								room.y = neighbor.y;
+								shift(room, dir);
 								findStubs(room, desc);
 								location.setNeighbor(dir, room);
 								location = room;
@@ -317,12 +321,35 @@ public class RoomManager
 		{
 			room.x = 2;
 			dir = Compass.invert(dir);
-		}
-		
+			
+			// Shift all rooms down
+			Iterator<Room> shifter = rooms.iterator();
+			while (shifter.hasNext())
+			{
+				Room shift = shifter.next();
+				if (shift == room || shift.z != room.z)
+					continue;
+				
+				if (shift.x >= room.x)
+					shift.x += room.width + SPACE;
+			}
+		}	
 		if (room.y < 0)
 		{
 			room.y = 2;
 			dir = Compass.invert(dir);
+			
+			// Shift all rooms to the side
+			Iterator<Room> shifter = rooms.iterator();
+			while (shifter.hasNext())
+			{
+				Room shift = shifter.next();
+				if (shift == room || shift.z != room.z)
+					continue;
+				
+				if (shift.y >= room.y)
+					shift.y += room.height + SPACE;
+			}
 		}
 		
 		// Test every other room on this level for intersection

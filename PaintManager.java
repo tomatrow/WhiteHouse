@@ -148,26 +148,26 @@ public class PaintManager implements PaintListener
 			case NORTH:
 				xa = (a.x + a.width / 2) * SIZE;
 				ya = a.y * SIZE;
-				xb = (b == null) ? xa : (b.x + b.width / 2) * SIZE;
+				xb = xa;
 				yb = (b == null) ? ya - SIZE : (b.y + b.height) * SIZE;
 				break;
 			case EAST:
 				xa = (a.x + a.width) * SIZE;
 				ya = (a.y + a.height / 2) * SIZE;
 				xb = (b == null) ? xa + SIZE : b.x * SIZE;
-				yb = (b == null) ? ya : (b.y + b.height / 2) * SIZE;
+				yb = ya;
 				break;
 			case SOUTH:
 				xa = (a.x + a.width / 2) * SIZE;
-				ya = (a.y - a.height) * SIZE;
-				xb = (b == null) ? xa : (b.x + b.width / 2) * SIZE;
-				yb = (b == null) ? ya + SIZE : a.y * SIZE;
+				ya = (a.y + a.height) * SIZE;
+				xb = xa;
+				yb = (b == null) ? ya + SIZE : b.y * SIZE;
 				break;
 			case WEST:
 				xa = a.x * SIZE;
 				ya = (a.y + a.height / 2) * SIZE;
 				xb = (b == null) ? xa - SIZE : (b.x + b.width) * SIZE;
-				yb = (b == null) ? ya : (b.y + b.height / 2) * SIZE;
+				yb = ya;
 				break;
 			case NORTHEAST:
 				xa = (a.x + a.width) * SIZE;
