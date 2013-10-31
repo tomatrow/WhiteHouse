@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.awt.Point;
 
 /*
-	Repersents the connection between rooms.
+	Represents the connection between rooms.
 */
 
 class Connection

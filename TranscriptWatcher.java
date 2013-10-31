@@ -31,7 +31,7 @@ import java.util.Arrays;
 
 /*
  	TranscriptWatcher polls the transcript
-	file for changes, then prosseses them.
+	file for changes, then processes them.
 	It extends Thread so as to allow the
 	event thread to continue.
 */
@@ -66,7 +66,7 @@ public class TranscriptWatcher extends java.lang.Thread
 			// Read transcript into array
 			String[] lines = Files.readAllLines(transcript, Charset.defaultCharset()).toArray(new String[0]);
 			
-			// Find command prompts and process extract responce text
+			// Find command prompts and process extract response text
 			int index = -1;
 			for (int i = 0; i < lines.length; i++)
 			{	
@@ -106,7 +106,7 @@ public class TranscriptWatcher extends java.lang.Thread
 		});
 
 		
-		// Origenly tried to use WatchService to monider the
+		// Originally tried to use WatchService to monitor the
 		// file but it turns out that WatchService was only
 		// being notified when the transcript was done. I
 		// suspect it has something to do with the timestamp
