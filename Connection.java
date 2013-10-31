@@ -1,20 +1,20 @@
 /**
  *	Copyright (c) 2013 by Christian Johnson (_c_@mail.com)
  *	
- *	This file is part of MappingCubed, the Interactive Fiction Mapper.
+ *	This file is part of WhiteHouse, the Interactive Fiction Mapper.
  *	
- *	MappingCubed is free software: you can redistribute it and/or modify
+ *	WhiteHouse is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
  *	the Free Software Foundation, either version 3 of the License, or
  *	(at your option) any later version.
  *	
- *	MappingCubed is distributed in the hope that it will be useful,
+ *	WhiteHouse is distributed in the hope that it will be useful,
  *	but WITHOUT ANY WARRANTY; without even the implied warranty of
  *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *	GNU General Public License for more details.
  *	
  *	You should have received a copy of the GNU General Public License
- *	along with MappingCubed.  If not, see <http://www.gnu.org/licenses/>.
+ *	along with WhiteHouse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.github.redhatter.whitehouse;
