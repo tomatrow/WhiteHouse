@@ -55,11 +55,39 @@ public class RoomManager
 		this.canvas = canvas;
 	}
 	
+	// Change what room the use has selected. Changes floors
+	// even when there are no connecting rooms.
 	public void select (Compass dir)
 	{
 		Room neighbor = selection.getNeighbor(dir);
 		if (neighbor != null)
 			selection = neighbor;
+		else if (dir == Compass.DOWN)
+		{
+			Iterator<Room> iterator = rooms.iterator();
+			while (iterator.hasNext())
+			{
+				Room element = iterator.next();
+				if (element.z == selection.z-1)
+				{
+					selection = element;
+					break;
+				}
+			}
+		}
+		else if (dir == Compass.UP)
+		{
+			Iterator<Room> iterator = rooms.iterator();
+			while (iterator.hasNext())
+			{
+				Room element = iterator.next();
+				if (iterator.next().z == selection.z+1)
+				{
+					selection = neighbor;
+					break;
+				}
+			}
+		}
 
 		Display.getDefault().syncExec(new Runnable()
 		{
@@ -208,7 +236,7 @@ public class RoomManager
 					public void run()
 					{
 						MessageBox alert = new MessageBox(shell, SWT.YES|SWT.NO);
-						alert.setMessage("There is already a room in the direction you moved. Would you like to replace it with "+name+"?");
+						alert.setMessage("A room with the name '"+location.getNeighbor(dir).getName()+"' is already to the "+Compass.toString(dir)+", would you like to replace it with '"+name+"'?");
 						if (alert.open() == SWT.YES)
 						{
 							if (room != null)
@@ -251,7 +279,7 @@ public class RoomManager
 		while (iterator.hasNext())
 		{
 			Room room = iterator.next();
-			if (room.getName().equals(name) && room.getDesc().equals(desc))
+			if (room.getName().equals(name) && (desc.isEmpty() || room.getDesc().equals(desc)))
 				return room;
 		}
 		
