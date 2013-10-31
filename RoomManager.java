@@ -140,6 +140,8 @@ public class RoomManager
 	// Create new room, or move along structure in direction
 	public Room move (final Compass dir, final String name, final String desc)
 	{
+		final Room find = findRoom(name, desc);
+		
 		// No room has been created, create a new one
 		if (rooms.isEmpty())
 		{
@@ -153,8 +155,16 @@ public class RoomManager
 			location = room;
 			selection = location;
 		}
+		// Connect to old room in direction
+		else if (location.getNeighbor(dir) == null && find != null)
+		{
+			location.setNeighbor(dir, find);
+			location = find;
+			selection = location;
+
+		}
 		// New Room in direction
-		else if (location.getNeighbor(dir) == null)
+		else if (location.getNeighbor(dir) == null && find == null)
 		{
 			Room room = new Room();
 			rooms.add(room);
@@ -226,9 +236,8 @@ public class RoomManager
 		} else
 		{
 			// Nothing needs to be created, move to room
-			final Room room = findRoom(name, desc);
 			final Room neighbor = location.getNeighbor(dir);
-			if (room == neighbor)
+			if (find == neighbor)
 				location = neighbor;
 			else
 			{
@@ -240,10 +249,10 @@ public class RoomManager
 						alert.setMessage("A room with the name '"+neighbor.getName()+"' is already to the "+Compass.toString(dir)+", would you like to replace it with '"+name+"'?");
 						if (alert.open() == SWT.YES)
 						{
-							if (room != null)
+							if (find != null)
 							{
-								location.setNeighbor(dir, room);
-								location = room;
+								location.setNeighbor(dir, find);
+								location = find;
 							} else
 							{
 								Room room = new Room();
@@ -424,6 +433,10 @@ public class RoomManager
 							}
 							break;
 					}
+					
+					// We shifed it off the canvas
+					if (shift.x < 0 || shift.y < 0)
+						shift(shift, dir);
 				}
 			}
 		}
