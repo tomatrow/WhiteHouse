@@ -41,17 +41,22 @@ public class PaintManager implements PaintListener
 {
 	final private int SIZE = 20;
 	
-	private Image rose;
 	private RoomManager manager;
+	private boolean lock;
 	
 	public PaintManager(RoomManager manager)
 	{
 		this.manager = manager;
-		rose = new Image(Display.getDefault(), System.getProperty("user.dir")+"\\compass-rose.png");
+		lock = false;
 	}
 	
 	public void paintControl(PaintEvent e)
 	{
+		if (lock)
+			return;
+		else
+			lock = true;
+		
 		// Set Colors
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_GRAY));
 		e.gc.setBackground(e.display.getSystemColor(SWT.COLOR_WHITE));
@@ -68,13 +73,12 @@ public class PaintManager implements PaintListener
 		// Draw rooms and connections. All of it. Should
 		// probably use the clipping.
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
-		drawRoom(manager.location, e.gc);
-		
-		Rectangle size = rose.getBounds();
-		e.gc.drawImage(rose, bounds.width-size.width, bounds.height-size.height);
+		drawRoom(manager.selection, e.gc);
 		
 		// Reset flags for text paint
 		manager.painted();
+		
+		lock = false;
 	}
 	
 	private void drawRoom(Room room, GC gc)
@@ -89,7 +93,7 @@ public class PaintManager implements PaintListener
 		gc.fillRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);
 		gc.drawString(room.getName(), room.x*SIZE+10, room.y*SIZE+10);
 		
-		if (room == manager.location)
+		if (room == manager.selection)
 		{
 			gc.setLineWidth(2);
 			gc.drawRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);

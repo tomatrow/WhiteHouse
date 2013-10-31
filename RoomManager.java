@@ -23,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Canvas;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,14 +42,30 @@ public class RoomManager
 	// and the space between rooms
 	private Collection<Room> rooms = new HashSet<Room>();
 	private Shell shell;
+	private Canvas canvas;
 	private int SPACE = 2;
 	
 	// Room the player is currently in
 	public Room location;
+	public Room selection;
 	
-	public RoomManager (Shell shell)
+	public RoomManager (Shell shell, Canvas canvas)
 	{
 		this.shell = shell;
+		this.canvas = canvas;
+	}
+	
+	public void select (Compass dir)
+	{
+		Room neighbor = selection.getNeighbor(dir);
+		if (neighbor != null)
+			selection = neighbor;
+
+		Display.getDefault().syncExec(new Runnable()
+		{
+			public void run()
+				{canvas.redraw();}
+		});
 	}
 
 	// Create room with no connections and no neighbors
@@ -65,11 +82,15 @@ public class RoomManager
 			room.x = SPACE;
 			room.y = SPACE;
 			location = room;
+			selection = location;
 		} else
 		{
 			Room look = findRoom(name, desc);
 			if (look != null)
+			{
 				location = look;
+				selection = location;
+			}
 			else
 			{
 				Room room = new Room();
@@ -81,6 +102,7 @@ public class RoomManager
 				room.y = SPACE;
 				clear(room);
 				location = room;
+				selection = location;
 			}	
 		}
 		
@@ -101,6 +123,7 @@ public class RoomManager
 			room.x = SPACE;
 			room.y = SPACE;
 			location = room;
+			selection = location;
 		}
 		// New Room in direction
 		else if (location.getNeighbor(dir) == null)
@@ -171,6 +194,7 @@ public class RoomManager
 			shift(room, dir);
 			location.setNeighbor(dir, room);
 			location = room;
+			selection = location;
 		} else
 		{
 			// Nothing needs to be created, move to room
@@ -179,7 +203,7 @@ public class RoomManager
 				location = location.getNeighbor(dir);
 			else
 			{
-				Display.getDefault().asyncExec(new Runnable()
+				Display.getDefault().syncExec(new Runnable()
 				{
 					public void run()
 					{
@@ -200,6 +224,7 @@ public class RoomManager
 								findStubs(room, desc);
 								location.setNeighbor(dir, room);
 								location = room;
+								selection = location;
 							}
 						}
 					}

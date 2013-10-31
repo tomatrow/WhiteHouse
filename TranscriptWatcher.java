@@ -20,7 +20,7 @@
 package com.github.redhatter.whitehouse;
 
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Canvas;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,16 +44,16 @@ public class TranscriptWatcher extends java.lang.Thread
 	
 	private RoomManager manager;
 	private Path transcript;
-	private Shell shell;
+	private Canvas canvas;
 	
 	// Flag to stop thread (Thread.stop() method is unsafe)
 	public volatile boolean stop;
 	
-	public TranscriptWatcher (Path transcript, RoomManager manager, Shell shell)
+	public TranscriptWatcher (Path transcript, RoomManager manager, Canvas canvas)
 	{
 		this.transcript = transcript;
 		this.manager = manager;
-		this.shell = shell;
+		this.canvas = canvas;
 		stop = false;
 	}
 
@@ -83,7 +83,7 @@ public class TranscriptWatcher extends java.lang.Thread
 							if (name > 0)
 							{
 								String desc = extractParagraph(Arrays.copyOfRange(text, name, text.length-1, String[].class));
-								
+																
 								if (dir == Compass.NONE)
 									manager.look(text[name], desc);
 								else
@@ -99,10 +99,10 @@ public class TranscriptWatcher extends java.lang.Thread
 		catch (IOException x)
 			{System.out.println(x);}
 		
-		Display.getDefault().asyncExec(new Runnable()
+		Display.getDefault().syncExec(new Runnable()
 		{
 			public void run()
-				{shell.redraw();}
+				{canvas.redraw();}
 		});
 
 		
@@ -155,7 +155,7 @@ public class TranscriptWatcher extends java.lang.Thread
 				Display.getDefault().asyncExec(new Runnable()
 				{
 					public void run()
-						{shell.redraw();}
+						{canvas.redraw();}
 				});
 			}
 		} catch (IOException x)

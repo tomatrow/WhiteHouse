@@ -20,9 +20,14 @@
 package com.github.redhatter.whitehouse;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.custom.ScrolledComposite;
 
 import java.nio.file.Paths;
 import java.nio.file.Path;
@@ -34,8 +39,15 @@ public class WhiteHouse
 		// Create window
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
-		shell.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+		Rectangle area = shell.getClientArea();
 		shell.setText("WhiteHouse");
+
+		final ScrolledComposite scroll = new ScrolledComposite(shell, SWT.H_SCROLL | SWT.V_SCROLL);
+		final Canvas canvas = new Canvas(scroll, SWT.NONE);
+		canvas.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+		scroll.setContent(canvas);
+		canvas.setBounds(area);
+		scroll.setBounds(area);
 	
 		// Open FileDialog to select transcript
 		Path transcript;
@@ -51,16 +63,31 @@ public class WhiteHouse
 		}
 		
 		// Create RoomManager and start thread to watch transcript file
-		RoomManager manager = new RoomManager(shell);
-		TranscriptWatcher watcher = new TranscriptWatcher(transcript, manager, shell);
+		final RoomManager manager = new RoomManager(shell, canvas);
+		final TranscriptWatcher watcher = new TranscriptWatcher(transcript, manager, canvas);
 		watcher.start();
 		
 		// Create and register PaintManager
-		PaintManager paint = new PaintManager(manager);
-		shell.addPaintListener(paint);
+		final PaintManager paint = new PaintManager(manager);
+		canvas.addPaintListener(paint);
+		
+		final Rose rose = new Rose(shell, manager);
+		Rectangle bounds = rose.getBounds();
+		rose.setLocation(area.width-bounds.width, area.height-bounds.height);
+		rose.moveAbove(null);
 		
 		// Start event loop
 		shell.open();
+		shell.addListener(SWT.Resize, new Listener ()
+		{
+			public void handleEvent (Event e)
+			{
+				Rectangle area = shell.getClientArea();
+				Rectangle bounds = rose.getBounds();
+				scroll.setBounds(area);
+				rose.setLocation(area.width-bounds.width, area.height-bounds.height);
+			}
+		});
 		while (!shell.isDisposed())
 			if (!display.readAndDispatch())
 				display.sleep();
