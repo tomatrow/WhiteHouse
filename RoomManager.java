@@ -300,6 +300,20 @@ public class RoomManager
 		return null;
 	}
 	
+	public Collection<Room> getFloor (int z)
+	{
+		Collection<Room> list = new HashSet<Room>();
+		Iterator<Room> iterator = rooms.iterator();
+		while (iterator.hasNext())
+		{
+			Room room = iterator.next();
+			if (room.z == z)
+				list.add(room);
+		}
+		
+		return list;
+	}
+	
 	private Room findRoom (String name, String desc)
 	{
 		Iterator<Room> iterator = rooms.iterator();

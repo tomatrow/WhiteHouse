@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.awt.Point;
 
@@ -75,7 +76,11 @@ public class PaintManager implements PaintListener
 		// Draw rooms and connections. All of it. Should
 		// probably use the clipping.
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
-		drawRoom(manager.selection, e.gc);
+
+		Collection<Room> rooms = manager.getFloor(manager.selection.z);
+		Iterator<Room> iterator = rooms.iterator();
+		while (iterator.hasNext())
+			drawRoom(iterator.next(), e.gc);
 		
 		// Reset flags for text paint
 		manager.painted();
@@ -127,16 +132,6 @@ public class PaintManager implements PaintListener
 		drawConnection(room.getConnection(Compass.NORTHWEST), gc);
 		drawConnection(room.getConnection(Compass.SOUTHEAST), gc);
 		drawConnection(room.getConnection(Compass.SOUTHWEST), gc);
-		
-		// Draw this room's neighoring rooms
-		drawRoom(room.getNeighbor(Compass.NORTH), gc);
-		drawRoom(room.getNeighbor(Compass.EAST), gc);
-		drawRoom(room.getNeighbor(Compass.SOUTH), gc);
-		drawRoom(room.getNeighbor(Compass.WEST), gc);
-		drawRoom(room.getNeighbor(Compass.NORTHEAST), gc);
-		drawRoom(room.getNeighbor(Compass.NORTHWEST), gc);
-		drawRoom(room.getNeighbor(Compass.SOUTHEAST), gc);
-		drawRoom(room.getNeighbor(Compass.SOUTHWEST), gc);
 	}
 	
 	// TODO: Use flag so as to only draw each Connection once
