@@ -23,12 +23,18 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.awt.Point;
+import java.awt.Shape;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
 
 /*
 	Represents the connection between rooms.
 */
 
-class Connection
+class Connection implements Shape
 {
 	private List<Point> segments = new LinkedList<Point>();
 	
@@ -50,5 +56,74 @@ class Connection
 	public boolean isDirect ()
 	{
 		return segments.isEmpty();
+	}
+	
+	@Override
+	public Rectangle getBounds()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public Rectangle2D getBounds2D()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public boolean contains(double x, double y)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public boolean contains(Point2D p)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public boolean intersects(double x, double y, double w, double h)
+	{
+		return intersects(new Rectangle2D.Double(x, y, w, h));
+	}
+	
+	@Override
+	public boolean intersects(Rectangle2D r)
+	{
+		Iterator<Point> iterator = segments.iterator();
+		Point pPoint = iterator.next();
+		while (iterator.hasNext())
+		{
+			Point nPoint = iterator.next();
+			if (r.intersectsLine(pPoint.x, pPoint.y, nPoint.x, nPoint.y))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public boolean contains(double x, double y, double w, double h)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public boolean contains(Rectangle2D r)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public PathIterator getPathIterator(AffineTransform at)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	@Override
+	public PathIterator getPathIterator(AffineTransform at, double flatness)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }
