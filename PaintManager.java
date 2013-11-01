@@ -69,6 +69,8 @@ public class PaintManager implements PaintListener
 		
 		for (y = e.y / SIZE; y <= bounds.height / SIZE; y++)
 			e.gc.drawLine(e.x , y * SIZE, e.x + e.width, y * SIZE);
+
+		e.gc.setLineWidth(2);
 		
 		// Draw rooms and connections. All of it. Should
 		// probably use the clipping.
@@ -95,9 +97,17 @@ public class PaintManager implements PaintListener
 		
 		if (room == manager.selection)
 		{
-			gc.setLineWidth(2);
+			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+			gc.setLineWidth(3);
 			gc.drawRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);
-			gc.setLineWidth(1);
+			gc.setLineWidth(2);
+			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		}
+		else if (room == manager.location)
+		{
+			gc.setLineWidth(3);
+			gc.drawRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);
+			gc.setLineWidth(2);
 		}
 		else
 			gc.drawRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);

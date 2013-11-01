@@ -55,6 +55,40 @@ public class RoomManager
 		this.canvas = canvas;
 	}
 	
+	public Room newRoom (int x, int y, String name, String desc)
+	{
+		Room room = new Room();
+		rooms.add(room);
+		room.x = x;
+		room.y = y;
+		selection = room;
+		
+		if (name != null)
+			room.setName(name);
+		
+		if (desc != null)
+		{
+			room.setDesc(desc);
+			findStubs(room, desc);
+		}
+		
+		return room;
+	}
+	
+	public void select (Room room)
+	{
+		Iterator<Room> iterator = rooms.iterator();
+		while (iterator.hasNext())
+		{
+			Room element = iterator.next();
+			if (element == room)
+			{
+				selection = element;
+				return;
+			}
+		}
+	}
+	
 	// Change what room the use has selected. Changes floors
 	// even when there are no connecting rooms.
 	public void select (Compass dir)
@@ -102,15 +136,7 @@ public class RoomManager
 	{
 		if (rooms.isEmpty())
 		{
-			Room room = new Room();
-			rooms.add(room);
-			room.setName(name);
-			room.setDesc(desc);
-			findStubs(room, desc);
-			room.x = SPACE;
-			room.y = SPACE;
-			location = room;
-			selection = location;
+			location = newRoom(SPACE, SPACE, name, desc);
 		} else
 		{
 			Room look = findRoom(name, desc);
@@ -121,19 +147,11 @@ public class RoomManager
 			}
 			else
 			{
-				Room room = new Room();
-				rooms.add(room);
-				room.setName(name);
-				room.setDesc(desc);
-				findStubs(room, desc);
-				room.x = SPACE;
-				room.y = SPACE;
-				clear(room);
-				location = room;
-				selection = location;
-			}	
+				location = newRoom(SPACE, SPACE, name, desc); 
+				clear(location);
+			}
 		}
-		
+
 		return location;
 	}
 	
@@ -145,15 +163,7 @@ public class RoomManager
 		// No room has been created, create a new one
 		if (rooms.isEmpty())
 		{
-			Room room = new Room();
-			rooms.add(room);
-			room.setName(name);
-			room.setDesc(desc);
-			findStubs(room, desc);
-			room.x = SPACE;
-			room.y = SPACE;
-			location = room;
-			selection = location;
+			location = newRoom(SPACE, SPACE, name, desc);
 		}
 		// Connect to old room in direction
 		else if (location.getNeighbor(dir) == null && find != null)
@@ -161,78 +171,76 @@ public class RoomManager
 			location.setNeighbor(dir, find);
 			location = find;
 			selection = location;
-
 		}
 		// New Room in direction
 		else if (location.getNeighbor(dir) == null && find == null)
 		{
-			Room room = new Room();
-			rooms.add(room);
-			room.setName(name);
-			room.setDesc(desc);
-			findStubs(room, desc);
+			int x = 0;
+			int y = 0;
+			int z = 0;
 			
 			// Calculate location
 			switch (dir)
 			{
 				case NORTH:
-					room.x = location.x;
-					room.y = location.y - room.height - SPACE;
-					room.z = location.z;
+					x = location.x;
+					y = location.y - location.height - SPACE;
+					z = location.z;
 					break;
 				case EAST:
-					room.x = location.x + location.width + SPACE;
-					room.y = location.y;
-					room.z = location.z;
+					x = location.x + location.width + SPACE;
+					y = location.y;
+					z = location.z;
 					break;
 				case SOUTH:
-					room.x = location.x;
-					room.y = location.y + location.height + SPACE;
-					room.z = location.z;
+					x = location.x;
+					y = location.y + location.height + SPACE;
+					z = location.z;
 					break;
 				case WEST:
-					room.x = location.x - room.width - SPACE;
-					room.y = location.y;
-					room.z = location.z;
+					x = location.x - location.width - SPACE;
+					y = location.y;
+					z = location.z;
 					break;
 				case NORTHEAST:
-					room.x = location.x + location.width + SPACE;
-					room.y = location.y - room.height - SPACE;
-					room.z = location.z;
+					x = location.x + location.width + SPACE;
+					y = location.y - location.height - SPACE;
+					z = location.z;
 					break;
 				case NORTHWEST:
-					room.x = location.x - room.width - SPACE;
-					room.y = location.y - room.height - SPACE;
-					room.z = location.z;
+					x = location.x - location.width - SPACE;
+					y = location.y - location.height - SPACE;
+					z = location.z;
 					break;
 				case SOUTHEAST:
-					room.x = location.x + location.width + SPACE;
-					room.y = location.y + location.height + SPACE;
-					room.z = location.z;
+					x = location.x + location.width + SPACE;
+					y = location.y + location.height + SPACE;
+					z = location.z;
 					break;
 				case SOUTHWEST:
-					room.x = location.x - room.width - SPACE;
-					room.y = location.y + location.height + SPACE;
-					room.z = location.z;
+					x = location.x - location.width - SPACE;
+					y = location.y + location.height + SPACE;
+					z = location.z;
 					break;
 				case UP:
-					room.x = location.x;
-					room.y = location.y;
-					room.z = location.z + 1;
+					x = location.x;
+					y = location.y;
+					z = location.z + 1;
 					break;
 				case DOWN:
-					room.x = location.x;
-					room.y = location.y;
-					room.z = location.z - 1;
+					x = location.x;
+					y = location.y;
+					z = location.z - 1;
 					break;
 			}
 			
-			// Fix any overlaps, set connecting neighbors,
-			// and move to Room
+			Room room = newRoom(x, y, name, desc);
+			room.z = z;
+			
+			// Fix any overlaps, set connecting neighbors
 			shift(room, dir);
 			location.setNeighbor(dir, room);
 			location = room;
-			selection = location;
 		} else
 		{
 			// Nothing needs to be created, move to room
@@ -255,17 +263,10 @@ public class RoomManager
 								location = find;
 							} else
 							{
-								Room room = new Room();
-								rooms.add(room);
-								room.setName(name);
-								room.setDesc(desc);
-								room.x = neighbor.x;
-								room.y = neighbor.y;
+								Room room = newRoom(neighbor.x, neighbor.y, name, desc);
 								shift(room, dir);
-								findStubs(room, desc);
 								location.setNeighbor(dir, room);
 								location = room;
-								selection = location;
 							}
 						}
 					}
@@ -284,6 +285,19 @@ public class RoomManager
 		{
 			iterator.next().paint = false;
 		}
+	}
+	
+	public Room findRoom (int x, int y)
+	{
+		Iterator<Room> iterator = rooms.iterator();
+		while (iterator.hasNext())
+		{
+			Room room = iterator.next();
+			if (room.contains(x, y))
+				return room;
+		}
+		
+		return null;
 	}
 	
 	private Room findRoom (String name, String desc)
