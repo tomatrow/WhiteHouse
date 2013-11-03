@@ -21,6 +21,7 @@ package com.github.redhatter.whitehouse;
 
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.widgets.Control;
 
 class InteractionManager implements MouseListener
 {
@@ -51,10 +52,13 @@ class InteractionManager implements MouseListener
 	
 	public void mouseClick (MouseEvent e)
 	{
-		Room room = manager.findRoom(e.x, e.y);
+		Room room = manager.findRoom(e.x/20, e.y/20);
+		System.out.println(e.x+","+e.y+","+room);
 		if (room != null)
 			manager.select(room);
 		else
-			manager.newRoom(e.x, e.y, null, null);
+			manager.newRoom(e.x/20, e.y/20, "Untitled", null);
+		
+		((Control)e.widget).redraw();
 	}
 }
