@@ -39,8 +39,8 @@ public class Room extends Rectangle
 
 	public Room ()
 	{
-		width = 6;
-		height = 4;
+		width = 120;
+		height = 80;
 	}
 	
 	public void setNeighbor (Compass dir, Room room)

@@ -97,31 +97,31 @@ public class PaintManager implements PaintListener
 		room.paint = true;
 
 		// Draw room
-		gc.fillRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);
-		gc.drawString(room.getName(), room.x*SIZE+10, room.y*SIZE+10);
+		gc.fillRectangle(room.x, room.y, room.width, room.height);
+		gc.drawString(room.getName(), room.x+10, room.y+10);
 		
 		if (room == manager.selection)
 		{
 			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
 			gc.setLineWidth(3);
-			gc.drawRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);
+			gc.drawRectangle(room.x, room.y, room.width, room.height);
 			gc.setLineWidth(2);
 			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 		}
 		else if (room == manager.location)
 		{
 			gc.setLineWidth(3);
-			gc.drawRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);
+			gc.drawRectangle(room.x, room.y, room.width, room.height);
 			gc.setLineWidth(2);
 		}
 		else
-			gc.drawRectangle(room.x*SIZE, room.y*SIZE, room.width*SIZE, room.height*SIZE);
+			gc.drawRectangle(room.x, room.y, room.width, room.height);
 		
 		if (room.getNeighbor(Compass.UP) != null)
-			gc.drawString("\u25B2", (room.x)*SIZE+SIZE/2, (room.y+room.height-1)*SIZE);
+			gc.drawString("\u25B2", room.x+10, room.y+room.height-SIZE);
 					
 		if (room.getNeighbor(Compass.DOWN) != null)
-			gc.drawString("\u25BC", (room.x+1)*SIZE, (room.y+room.height-1)*SIZE);
+			gc.drawString("\u25BC", room.x+SIZE, room.y+room.height-SIZE);
 
 		// Draw this room's connections
 		drawConnection(room.getConnection(Compass.NORTH), gc);
@@ -145,7 +145,7 @@ public class PaintManager implements PaintListener
 		while (iterator.hasNext())
 		{
 			Point b = iterator.next();
-			gc.drawLine(a.x * SIZE, a.y * SIZE, b.x * SIZE, b.y * SIZE);
+			gc.drawLine(a.x, a.y, b.x, b.y);
 			a = b;
 		}
 	}

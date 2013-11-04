@@ -52,12 +52,11 @@ class InteractionManager implements MouseListener
 	
 	public void mouseClick (MouseEvent e)
 	{
-		Room room = manager.findRoom(e.x/20, e.y/20);
-		System.out.println(e.x+","+e.y+","+room);
+		Room room = manager.findRoom(e.x, e.y);
 		if (room != null)
 			manager.select(room);
 		else
-			manager.newRoom(e.x/20, e.y/20, "Untitled", null);
+			manager.newRoom(e.x, e.y, "Untitled", null);
 		
 		((Control)e.widget).redraw();
 	}

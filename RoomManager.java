@@ -43,7 +43,7 @@ public class RoomManager
 	private Collection<Room> rooms = new HashSet<Room>();
 	private Shell shell;
 	private Canvas canvas;
-	private int SPACE = 2;
+	private int SPACE = 40;
 	
 	// Room the player is currently in
 	public Room location;
@@ -59,8 +59,8 @@ public class RoomManager
 	{
 		Room room = new Room();
 		rooms.add(room);
-		room.x = x;
-		room.y = y;
+		room.x = Math.round(x / 20) * 20;
+		room.y = Math.round(y / 20) * 20;
 		selection = room;
 		
 		if (name != null)
@@ -356,7 +356,7 @@ public class RoomManager
 		// Fix rooms out side of canvas
 		if (room.x < 0)
 		{
-			room.x = 2;
+			room.x = SPACE;
 			dir = Compass.invert(dir);
 			
 			// Shift all rooms down
@@ -373,7 +373,7 @@ public class RoomManager
 		}	
 		if (room.y < 0)
 		{
-			room.y = 2;
+			room.y = SPACE;
 			dir = Compass.invert(dir);
 			
 			// Shift all rooms to the side
