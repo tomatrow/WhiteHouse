@@ -139,82 +139,14 @@ public class PaintManager implements PaintListener
 	{
 		if (connection == null)
 			return;
-		
-		// Calculate starting and ending points based on
-		// connected rooms
-		int xa = 0;
-		int xb = 0;
-		int ya = 0;
-		int yb = 0;
-		Room a = connection.a;
-		Room b = connection.b;
-		switch (connection.aSide)
+				
+		Iterator<Point> iterator = connection.iterator();
+		Point a = iterator.next();
+		while (iterator.hasNext())
 		{
-			case NORTH:
-				xa = (a.x + a.width / 2) * SIZE;
-				ya = a.y * SIZE;
-				xb = xa;
-				yb = (b == null) ? ya - SIZE : (b.y + b.height) * SIZE;
-				break;
-			case EAST:
-				xa = (a.x + a.width) * SIZE;
-				ya = (a.y + a.height / 2) * SIZE;
-				xb = (b == null) ? xa + SIZE : b.x * SIZE;
-				yb = ya;
-				break;
-			case SOUTH:
-				xa = (a.x + a.width / 2) * SIZE;
-				ya = (a.y + a.height) * SIZE;
-				xb = xa;
-				yb = (b == null) ? ya + SIZE : b.y * SIZE;
-				break;
-			case WEST:
-				xa = a.x * SIZE;
-				ya = (a.y + a.height / 2) * SIZE;
-				xb = (b == null) ? xa - SIZE : (b.x + b.width) * SIZE;
-				yb = ya;
-				break;
-			case NORTHEAST:
-				xa = (a.x + a.width) * SIZE;
-				ya = a.y * SIZE;
-				xb = (b == null) ? xa + SIZE : b.x * SIZE;
-				yb = (b == null) ? ya - SIZE : (b.y + b.height) * SIZE;
-				break;
-			case NORTHWEST:
-				xa = a.x * SIZE;
-				ya = a.y * SIZE;
-				xb = (b == null) ? xa - SIZE : (b.x + b.width) * SIZE;
-				yb = (b == null) ? ya - SIZE : (b.y + b.height) * SIZE;
-				break;
-			case SOUTHEAST:
-				xa = (a.x + a.width) * SIZE;
-				ya = (a.y + a.height) * SIZE;
-				xb = (b == null) ? xa + SIZE : b.x * SIZE;
-				yb = (b == null) ? ya + SIZE : b.y * SIZE;
-				break;
-			case SOUTHWEST:
-				xa = a.x * SIZE;
-				ya = (a.y + a.height) * SIZE;
-				xb = (b == null) ? xa - SIZE : (b.x + b.width) * SIZE;
-				yb = (b == null) ? ya + SIZE : b.y * SIZE;
-				break;
-		}			
-		
-		// There are no segments to draw
-		if (connection.isDirect())
-			gc.drawLine(xa, ya, xb, yb);
-		else
-		{
-			Iterator<Point> iterator = connection.iterator();
-			Point pSegment = iterator.next();
-			gc.drawLine(xa, ya, pSegment.x * SIZE, pSegment.y * SIZE);
-			while (iterator.hasNext())
-			{
-				Point nSegment = iterator.next();
-				gc.drawLine(pSegment.x * SIZE, pSegment.y * SIZE, nSegment.x * SIZE, nSegment.y * SIZE);
-				pSegment = nSegment;
-			}
-			gc.drawLine(pSegment.x * SIZE, pSegment.y * SIZE, xb, yb);
+			Point b = iterator.next();
+			gc.drawLine(a.x * SIZE, a.y * SIZE, b.x * SIZE, b.y * SIZE);
+			a = b;
 		}
 	}
 }

@@ -50,12 +50,69 @@ class Connection implements Shape
 	
 	public Iterator<Point> iterator ()
 	{
-		return segments.iterator();
-	}
-	
-	public boolean isDirect ()
-	{
-		return segments.isEmpty();
+		// Calculate starting and ending points based on
+		// connected rooms
+		int xa = 0;
+		int xb = 0;
+		int ya = 0;
+		int yb = 0;
+		switch (aSide)
+		{
+			case NORTH:
+				xa = (a.x + a.width / 2);
+				ya = a.y;
+				xb = xa;
+				yb = (b == null) ? ya - 1 : (b.y + b.height);
+				break;
+			case EAST:
+				xa = (a.x + a.width);
+				ya = (a.y + a.height / 2);
+				xb = (b == null) ? xa + 1 : b.x;
+				yb = ya;
+				break;
+			case SOUTH:
+				xa = (a.x + a.width / 2);
+				ya = (a.y + a.height);
+				xb = xa;
+				yb = (b == null) ? ya + 1 : b.y;
+				break;
+			case WEST:
+				xa = a.x;
+				ya = (a.y + a.height / 2);
+				xb = (b == null) ? xa - 1 : (b.x + b.width);
+				yb = ya;
+				break;
+			case NORTHEAST:
+				xa = (a.x + a.width);
+				ya = a.y;
+				xb = (b == null) ? xa + 1 : b.x;
+				yb = (b == null) ? ya - 1 : (b.y + b.height);
+				break;
+			case NORTHWEST:
+				xa = a.x;
+				ya = a.y;
+				xb = (b == null) ? xa - 1 : (b.x + b.width);
+				yb = (b == null) ? ya - 1 : (b.y + b.height);
+				break;
+			case SOUTHEAST:
+				xa = (a.x + a.width);
+				ya = (a.y + a.height);
+				xb = (b == null) ? xa + 1 : b.x;
+				yb = (b == null) ? ya + 1 : b.y;
+				break;
+			case SOUTHWEST:
+				xa = a.x;
+				ya = (a.y + a.height);
+				xb = (b == null) ? xa - 1 : (b.x + b.width);
+				yb = (b == null) ? ya + 1 : b.y;
+				break;
+		}
+		
+		List<Point> list = new LinkList(segments);
+		list.add(0, new Point(xa, ya));
+		list.add(new Point(xb, yb));
+
+		return list.iterator();
 	}
 	
 	@Override
@@ -73,13 +130,24 @@ class Connection implements Shape
 	@Override
 	public boolean contains(double x, double y)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		return contains(new Point2D.Double(x, y));
 	}
 	
 	@Override
-	public boolean contains(Point2D p)
+	public boolean contains(Point2D c)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		Iterator<Point> iterator = iterator();
+		Point a = iterator.next();
+		while (iterator.hasNext())
+		{
+			Point b = iterator.next();
+			if (a.distance(c) + b.distance(c) == a.distance(b))
+				return true;
+			
+			a = b;
+		}
+		
+		return false;
 	}
 	
 	@Override
@@ -92,12 +160,14 @@ class Connection implements Shape
 	public boolean intersects(Rectangle2D r)
 	{
 		Iterator<Point> iterator = segments.iterator();
-		Point pPoint = iterator.next();
+		Point a = iterator.next();
 		while (iterator.hasNext())
 		{
-			Point nPoint = iterator.next();
-			if (r.intersectsLine(pPoint.x, pPoint.y, nPoint.x, nPoint.y))
+			Point b = iterator.next();
+			if (r.intersectsLine(a.x, a.y, b.x, b.y))
 				return true;
+			
+			a = b;
 		}
 		
 		return false;
@@ -106,13 +176,13 @@ class Connection implements Shape
 	@Override
 	public boolean contains(double x, double y, double w, double h)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		return false;
 	}
 	
 	@Override
 	public boolean contains(Rectangle2D r)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		return false;
 	}
 	
 	@Override
