@@ -108,7 +108,7 @@ class Connection implements Shape
 				break;
 		}
 		
-		List<Point> list = new LinkList(segments);
+		List<Point> list = new LinkedList<Point>(segments);
 		list.add(0, new Point(xa, ya));
 		list.add(new Point(xb, yb));
 
