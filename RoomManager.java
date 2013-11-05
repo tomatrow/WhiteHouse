@@ -320,9 +320,7 @@ public class RoomManager
 				&& (index+sDir.length() == desc.length() 
 					|| Character.getType(desc.charAt(index+sDir.length())) != Character.LETTER_NUMBER))
 			{
-				Connection stub = new Connection();
-				stub.a = room;
-				stub.aSide = dir;
+				Connection stub = new Connection(room, dir);
 				room.setConnection(dir, stub);
 			}
 		}

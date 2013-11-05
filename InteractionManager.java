@@ -29,6 +29,13 @@ import org.eclipse.swt.widgets.Control;
 
 class InteractionManager implements MouseListener, MouseMoveListener
 {
+	private enum Mode
+	{
+		NONE,
+		DRAG,
+		CONNECTION
+	}
+	
 	private RoomManager manager;
     private Shape element;
 	private int x;
@@ -36,12 +43,12 @@ class InteractionManager implements MouseListener, MouseMoveListener
     private int diffX;
     private int diffY;
     private Rectangle clip;
-    private boolean drag;
+    private Mode mode;
 	
 	public InteractionManager (RoomManager manager)
 	{
 		this.manager = manager;
-        drag = false;
+        mode = Mode.NONE;
 	}
 	
 	public void mouseDoubleClick (MouseEvent e)
@@ -52,28 +59,61 @@ class InteractionManager implements MouseListener, MouseMoveListener
 	{
 		x = e.x;
 		y = e.y;
-        element = manager.findElement(x, y);
+		
+		Shape temp = manager.findElement(x, y);
+				
+		if (mode == Mode.CONNECTION && temp instanceof Room)
+		{
+			Room room = (Room)temp;
+		
+			Rectangle top = new Rectangle(room.x, room.y, room.width, 20);
+			Rectangle right = new Rectangle(room.x + room.width - 20, room.y, 20, room.height);
+			Rectangle bottom = new Rectangle(room.x, room.y + room.height - 20, room.width, 20);
+			Rectangle left = new Rectangle(room.x, room.y, 20, room.height);
+			
+			if (top.contains(e.x, e.y) && left.contains(e.x, e.y))
+				((Connection)element).setb(room, Compass.NORTHWEST);
+			else if (top.contains(e.x, e.y) && right.contains(e.x, e.y))
+				((Connection)element).setb(room, Compass.NORTHEAST);
+			else if (bottom.contains(e.x, e.y) && left.contains(e.x, e.y))
+				((Connection)element).setb(room, Compass.SOUTHWEST);
+			else if (bottom.contains(e.x, e.y) && right.contains(e.x, e.y))
+				((Connection)element).setb(room, Compass.SOUTHEAST);
+			else if (top.contains(e.x, e.y))
+				((Connection)element).setb(room, Compass.NORTH);
+			else if (right.contains(e.x, e.y))
+				((Connection)element).setb(room, Compass.EAST);
+			else if (bottom.contains(e.x, e.y))
+				((Connection)element).setb(room, Compass.SOUTH);
+			else if (left.contains(e.x, e.y))
+				((Connection)element).setb(room, Compass.WEST);
+		}
+
+		
+        element = temp;
         if (element != null)
+		{
 			manager.selection = element;
+			mode = (mode == Mode.NONE) ? Mode.DRAG : mode;
+			
+			if (element instanceof Room)
+			{
+				Room room = (Room)element;
+				diffX = x - room.x;
+				diffY = y - room.y;
+				clip = new Rectangle(room);
+				for (Compass dir : Compass.values())
+				{
+					Connection connection = room.getConnection(dir);
+					if (connection != null)
+						clip.add(connection.getBounds());
+				}
+			}
+		}
         else
 			manager.newRoom(e.x, e.y, "Untitled", null);
 		
 		((Control)e.widget).redraw();
-
-        if (element instanceof Room)
-        {
-            Room room = (Room)element;
-            diffX = x - room.x;
-            diffY = y - room.y;
-            clip = new Rectangle(room);
-            for (Compass dir : Compass.values())
-            {
-                Connection connection = room.getConnection(dir);
-                if (connection != null)
-                    clip.add(connection.getBounds());
-            }
-        }
-        drag = true;
 	}
 	
 	public void mouseUp (MouseEvent e)
@@ -83,16 +123,22 @@ class InteractionManager implements MouseListener, MouseMoveListener
             ((Room)element).snap();
             ((Control)e.widget).redraw();
         }
+		
+		if (x == e.x && y == e.y)
+			mouseClick(e);
+		else
+		{
+			element = null;
+			mode = Mode.NONE;
+		}
         
         x = -1;
         y = -1;
-        element = null;
-        drag = false;
 	}
     
     public void mouseMove(MouseEvent e)
     {
-        if (drag && element instanceof Room)
+        if (mode == Mode.DRAG && element instanceof Room)
         {
             Room room = (Room)element;
             room.x = e.x - diffX;
@@ -100,5 +146,54 @@ class InteractionManager implements MouseListener, MouseMoveListener
             clip.add(room);
             ((Control)e.widget).redraw(clip.x-5, clip.y-5, clip.width+10, clip.height+10, false);
         }
+		else if (mode == Mode.CONNECTION && element instanceof Connection)
+		{
+			Connection connection = (Connection)element;
+			connection.setb(e.x, e.y);
+			Rectangle clip = connection.getBounds();
+			((Control)e.widget).redraw(clip.x-5, clip.y-5, clip.width+10, clip.height+10, false);
+		}
     }
+	
+	public void mouseClick(MouseEvent e)
+	{	
+		if (mode == Mode.CONNECTION && element instanceof Room)
+			mode = Mode.NONE;
+        else if (element instanceof Room)
+		{	
+			Room room = (Room)element;
+			
+			Rectangle top = new Rectangle(room.x, room.y, room.width, 20);
+			Rectangle right = new Rectangle(room.x + room.width - 20, room.y, 20, room.height);
+			Rectangle bottom = new Rectangle(room.x, room.y + room.height - 20, room.width, 20);
+			Rectangle left = new Rectangle(room.x, room.y, 20, room.height);
+			
+			Connection connection = null;
+			if (top.contains(e.x, e.y) && left.contains(e.x, e.y))
+				connection = new Connection(room, Compass.NORTHWEST);
+			else if (top.contains(e.x, e.y) && right.contains(e.x, e.y))
+				connection = new Connection(room, Compass.NORTHEAST);
+			else if (bottom.contains(e.x, e.y) && left.contains(e.x, e.y))
+				connection = new Connection(room, Compass.SOUTHWEST);
+			else if (bottom.contains(e.x, e.y) && right.contains(e.x, e.y))
+				connection = new Connection(room, Compass.SOUTHEAST);
+			else if (top.contains(e.x, e.y))
+				connection = new Connection(room, Compass.NORTH);
+			else if (right.contains(e.x, e.y))
+				connection = new Connection(room, Compass.EAST);
+			else if (bottom.contains(e.x, e.y))
+				connection = new Connection(room, Compass.SOUTH);
+			else if (left.contains(e.x, e.y))
+				connection = new Connection(room, Compass.WEST);
+			
+			element = connection;
+				
+			mode = Mode.CONNECTION;
+		}
+		else if (mode == Mode.CONNECTION && element instanceof Connection)
+		{
+			Connection connection = (Connection)element;
+			connection.add(e.x, e.y);
+		}
+	}
 }

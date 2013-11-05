@@ -38,78 +38,127 @@ class Connection implements Shape
 {
 	private List<Point> segments = new LinkedList<Point>();
 	
-	public Room a;
-	public Compass aSide;
-	public Room b;
-	public Compass bSide;
+	private Room a;
+	private Compass aSide;
+	private Room b;
+	private Compass bSide;
+	private int x = -1;
+	private int y = -1;
+	
+	public Connection (Room a, Compass aSide)
+	{
+		this.a = a;
+		this.aSide = aSide;
+		a.setConnection(aSide, this);
+	}
+	
+	public void setb (Room b, Compass bSide)
+	{
+		this.b = b;
+		this.bSide = bSide;
+		b.setConnection(bSide, this);
+	}
+	
+	public void setb (int x, int y)
+	{
+		this.x = x;
+		this.y = y;
+	}
 	
 	public boolean add (Point point)
 	{
 		return segments.add(point);
 	}
 	
+	public boolean add (int x, int y)
+	{
+		return add(new Point(x, y));
+	}
+
 	public Iterator<Point> iterator ()
 	{
 		// Calculate starting and ending points based on
-		// connected rooms
+		// connected rooms.
+		// TODO: I'm sure this can be done cleaner.
 		int xa = 0;
-		int xb = 0;
 		int ya = 0;
-		int yb = 0;
 		switch (aSide)
 		{
 			case NORTH:
 				xa = (a.x + a.width / 2);
 				ya = a.y;
-				xb = xa;
-				yb = (b == null) ? ya - 1 : (b.y + b.height);
 				break;
 			case EAST:
 				xa = (a.x + a.width);
 				ya = (a.y + a.height / 2);
-				xb = (b == null) ? xa + 1 : b.x;
-				yb = ya;
 				break;
 			case SOUTH:
 				xa = (a.x + a.width / 2);
 				ya = (a.y + a.height);
-				xb = xa;
-				yb = (b == null) ? ya + 1 : b.y;
 				break;
 			case WEST:
 				xa = a.x;
 				ya = (a.y + a.height / 2);
-				xb = (b == null) ? xa - 1 : (b.x + b.width);
-				yb = ya;
 				break;
 			case NORTHEAST:
 				xa = (a.x + a.width);
 				ya = a.y;
-				xb = (b == null) ? xa + 1 : b.x;
-				yb = (b == null) ? ya - 1 : (b.y + b.height);
 				break;
 			case NORTHWEST:
 				xa = a.x;
 				ya = a.y;
-				xb = (b == null) ? xa - 1 : (b.x + b.width);
-				yb = (b == null) ? ya - 1 : (b.y + b.height);
 				break;
 			case SOUTHEAST:
 				xa = (a.x + a.width);
 				ya = (a.y + a.height);
-				xb = (b == null) ? xa + 1 : b.x;
-				yb = (b == null) ? ya + 1 : b.y;
 				break;
 			case SOUTHWEST:
 				xa = a.x;
 				ya = (a.y + a.height);
-				xb = (b == null) ? xa - 1 : (b.x + b.width);
-				yb = (b == null) ? ya + 1 : b.y;
 				break;
 		}
 		
 		List<Point> list = new LinkedList<Point>(segments);
 		list.add(0, new Point(xa, ya));
+		
+		int xb = 0;
+		int yb = 0;
+		switch ((bSide == null) ? Compass.invert(aSide) : bSide)
+		{
+			case NORTH:
+				xb = (b == null) ? (x != -1) ? x : xa : (b.x + b.width / 2); 
+				yb = (b == null) ? (y != -1) ? y : ya - 1 : b.y;
+				break;
+			case EAST:
+				xb = (b == null) ? (x != -1) ? x : xa + 1 : (b.x + b.width);
+				yb = (b == null) ? (y != -1) ? y : ya: (b.y + b.height / 2);
+				break;
+			case SOUTH:
+				xb = (b == null) ? (x != -1) ? x : xa : (b.x + b.width / 2);
+				yb = (b == null) ? (y != -1) ? y : ya + 1 : (b.y + b.height);
+				break;
+			case WEST:
+				xb = (b == null) ? (x != -1) ? x : xa - 1 : b.x;
+				yb = (b == null) ? (y != -1) ? y : ya : (b.y + b.height / 2);
+				break;
+			case NORTHEAST:
+				xb = (b == null) ? (x != -1) ? x : xa + 1 : (b.x + b.width);
+				yb = (b == null) ? (y != -1) ? y : ya - 1 : b.y;
+				break;
+			case NORTHWEST:
+				xb = (b == null) ? (x != -1) ? x : xa - 1 : b.x;
+				yb = (b == null) ? (y != -1) ? y : ya - 1 : b.y;
+				break;
+			case SOUTHEAST:
+				xb = (b == null) ? (x != -1) ? x : xa + 1 : (b.x + b.width);
+				yb = (b == null) ? (y != -1) ? y : ya + 1 : (b.y + b.height);
+				break;
+			case SOUTHWEST:
+				xb = (b == null) ? (x != -1) ? x : xa - 1 : b.x;
+				yb = (b == null) ? (y != -1) ? y : ya + 1 : (b.y + b.height);
+				break;
+		}
+
 		list.add(new Point(xb, yb));
 
 		return list.iterator();
@@ -118,64 +167,12 @@ class Connection implements Shape
 	@Override
 	public Rectangle getBounds()
 	{
-		// Calculate starting and ending points based on
-		// connected rooms
-		int xa = 0;
-		int xb = 0;
-		int ya = 0;
-		int yb = 0;
-		switch (aSide)
-		{
-			case NORTH:
-				xa = (a.x + a.width / 2);
-				ya = a.y;
-				xb = xa;
-				yb = (b == null) ? ya - 1 : (b.y + b.height);
-				break;
-			case EAST:
-				xa = (a.x + a.width);
-				ya = (a.y + a.height / 2);
-				xb = (b == null) ? xa + 1 : b.x;
-				yb = ya;
-				break;
-			case SOUTH:
-				xa = (a.x + a.width / 2);
-				ya = (a.y + a.height);
-				xb = xa;
-				yb = (b == null) ? ya + 1 : b.y;
-				break;
-			case WEST:
-				xa = a.x;
-				ya = (a.y + a.height / 2);
-				xb = (b == null) ? xa - 1 : (b.x + b.width);
-				yb = ya;
-				break;
-			case NORTHEAST:
-				xa = (a.x + a.width);
-				ya = a.y;
-				xb = (b == null) ? xa + 1 : b.x;
-				yb = (b == null) ? ya - 1 : (b.y + b.height);
-				break;
-			case NORTHWEST:
-				xa = a.x;
-				ya = a.y;
-				xb = (b == null) ? xa - 1 : (b.x + b.width);
-				yb = (b == null) ? ya - 1 : (b.y + b.height);
-				break;
-			case SOUTHEAST:
-				xa = (a.x + a.width);
-				ya = (a.y + a.height);
-				xb = (b == null) ? xa + 1 : b.x;
-				yb = (b == null) ? ya + 1 : b.y;
-				break;
-			case SOUTHWEST:
-				xa = a.x;
-				ya = (a.y + a.height);
-				xb = (b == null) ? xa - 1 : (b.x + b.width);
-				yb = (b == null) ? ya + 1 : b.y;
-				break;
-		}
-        return new Rectangle(Math.min(xa, xb), Math.min(ya, yb), Math.abs(xa - xb), Math.abs(ya - yb));
+		Iterator<Point> iterator = iterator();
+		Rectangle bounds = new Rectangle(iterator.next());
+		while (iterator.hasNext())
+			bounds.add(iterator.next());
+
+        return bounds;
 	}
 	
 	@Override

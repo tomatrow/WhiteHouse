@@ -48,17 +48,12 @@ public class Room extends Rectangle
 	{
 		// Link Room, create Connection and connect it
 		neighbors.put(dir, room);
-		Connection connection = new Connection();
-		connection.a = this;
-		connection.aSide = dir;
-		setConnection(dir, connection);
+		Connection connection = new Connection(this, dir);
 		
 		// Link self, connect Connection
 		dir = Compass.invert(dir);
 		room.neighbors.put(dir,this);
-		connection.b = room;
-		connection.bSide = dir;
-		room.setConnection(dir, connection);
+		connection.setb(room, dir);
 	}
 	
 	/* Simple getters and setters */
