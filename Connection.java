@@ -149,6 +149,40 @@ class Connection implements Shape
 		
 		return false;
 	}
+    
+    public boolean contains(double x, double y, int tolerance)
+	{
+		return contains(new Point2D.Double(x, y), tolerance);
+	}
+    
+    // Returns true if c is within tolerance pixels from
+    // the Connection. Treats c as a point in a triangle
+    // with each segment as the base.
+    public boolean contains(Point2D c, int tolerance)
+	{
+		Iterator<Point> iterator = iterator();
+		Point a = iterator.next();
+		while (iterator.hasNext())
+		{
+			Point b = iterator.next();
+
+            // Calculate the length of all three sides
+            double A = a.distance(c);
+            double C = b.distance(c);
+            double B = a.distance(b);
+
+            // Use Heron's formula to find the height of
+            // the triangle (distance from line).
+            double S = (A+B+C)/2;
+            double area = Math.sqrt(S*(S-A)*(S-B)*(S-C));
+            if (area/(B*0.5) < tolerance)
+                return true;
+            
+			a = b;
+		}
+		
+		return false;
+	}
 	
 	@Override
 	public boolean intersects(double x, double y, double w, double h)

@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Canvas;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.awt.Shape;
 import java.awt.Rectangle;
 
 /*
@@ -47,7 +48,8 @@ public class RoomManager
 	
 	// Room the player is currently in
 	public Room location;
-	public Room selection;
+	public Shape selection;
+	public int floor;
 	
 	public RoomManager (Shell shell, Canvas canvas)
 	{
@@ -75,54 +77,22 @@ public class RoomManager
 		return room;
 	}
 	
-	public void select (Room room)
-	{
-		Iterator<Room> iterator = rooms.iterator();
-		while (iterator.hasNext())
-		{
-			Room element = iterator.next();
-			if (element == room)
-			{
-				selection = element;
-				return;
-			}
-		}
-	}
-	
 	// Change what room the use has selected. Changes floors
 	// even when there are no connecting rooms.
 	public void select (Compass dir)
 	{
-		Room neighbor = selection.getNeighbor(dir);
-		if (neighbor != null)
-			selection = neighbor;
-		else if (dir == Compass.DOWN)
-		{
-			Iterator<Room> iterator = rooms.iterator();
-			while (iterator.hasNext())
-			{
-				Room element = iterator.next();
-				if (element.z == selection.z-1)
-				{
-					selection = element;
-					break;
-				}
-			}
-		}
+		if (selection instanceof Room)
+ 		{
+			Room neighbor = ((Room)selection).getNeighbor(dir);
+			if (neighbor != null)
+				selection = neighbor;
+ 		}
+		
+		if (dir == Compass.DOWN)
+			floor -= 1;
 		else if (dir == Compass.UP)
-		{
-			Iterator<Room> iterator = rooms.iterator();
-			while (iterator.hasNext())
-			{
-				Room element = iterator.next();
-				if (iterator.next().z == selection.z+1)
-				{
-					selection = neighbor;
-					break;
-				}
-			}
-		}
-
+            floor += 1;
+            
 		Display.getDefault().syncExec(new Runnable()
 		{
 			public void run()
@@ -287,7 +257,7 @@ public class RoomManager
 		}
 	}
 	
-	public Room findRoom (int x, int y)
+	public Shape findElement (int x, int y)
 	{
 		Iterator<Room> iterator = rooms.iterator();
 		while (iterator.hasNext())
@@ -295,6 +265,13 @@ public class RoomManager
 			Room room = iterator.next();
 			if (room.contains(x, y))
 				return room;
+            
+			for (Compass dir : Compass.values())
+			{
+				Connection connection = room.getConnection(dir);
+				if (connection != null && connection.contains(x, y, 10))
+					return connection;
+			}
 		}
 		
 		return null;

@@ -77,7 +77,7 @@ public class PaintManager implements PaintListener
 		// probably use the clipping.
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
 
-		Collection<Room> rooms = manager.getFloor(manager.selection.z);
+		Collection<Room> rooms = manager.getFloor(manager.floor);
 		Iterator<Room> iterator = rooms.iterator();
 		while (iterator.hasNext())
 			drawRoom(iterator.next(), e.gc);
@@ -140,6 +140,9 @@ public class PaintManager implements PaintListener
 		if (connection == null)
 			return;
 				
+        if (connection == manager.selection)
+			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+        
 		Iterator<Point> iterator = connection.iterator();
 		Point a = iterator.next();
 		while (iterator.hasNext())
@@ -148,5 +151,8 @@ public class PaintManager implements PaintListener
 			gc.drawLine(a.x, a.y, b.x, b.y);
 			a = b;
 		}
+        
+        if (connection == manager.selection)
+			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 	}
 }
