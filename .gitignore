@@ -1,7 +1,13 @@
 #################
+## Windows
+#################
+Thumbs.db
+
+#################
 ## Custom
 #################
 
 *.class
 slush/
 transcript.txt
+*.patch
