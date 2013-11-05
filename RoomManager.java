@@ -61,8 +61,9 @@ public class RoomManager
 	{
 		Room room = new Room();
 		rooms.add(room);
-		room.x = Math.round(x / 20) * 20;
-		room.y = Math.round(y / 20) * 20;
+		room.x = x;
+		room.y = y;
+        room.snap();
 		selection = room;
 		
 		if (name != null)

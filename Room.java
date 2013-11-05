@@ -21,6 +21,7 @@ package com.github.redhatter.whitehouse;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 public class Room extends Rectangle
@@ -96,4 +97,12 @@ public class Room extends Rectangle
 	{
 		return connections.get(dir);
 	}
+    
+    public Point snap ()
+    {
+        x = Math.round(x / 20) * 20;
+		y = Math.round(y / 20) * 20;
+        
+        return new Point(x, y);
+    }
 }

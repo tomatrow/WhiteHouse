@@ -118,7 +118,64 @@ class Connection implements Shape
 	@Override
 	public Rectangle getBounds()
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		// Calculate starting and ending points based on
+		// connected rooms
+		int xa = 0;
+		int xb = 0;
+		int ya = 0;
+		int yb = 0;
+		switch (aSide)
+		{
+			case NORTH:
+				xa = (a.x + a.width / 2);
+				ya = a.y;
+				xb = xa;
+				yb = (b == null) ? ya - 1 : (b.y + b.height);
+				break;
+			case EAST:
+				xa = (a.x + a.width);
+				ya = (a.y + a.height / 2);
+				xb = (b == null) ? xa + 1 : b.x;
+				yb = ya;
+				break;
+			case SOUTH:
+				xa = (a.x + a.width / 2);
+				ya = (a.y + a.height);
+				xb = xa;
+				yb = (b == null) ? ya + 1 : b.y;
+				break;
+			case WEST:
+				xa = a.x;
+				ya = (a.y + a.height / 2);
+				xb = (b == null) ? xa - 1 : (b.x + b.width);
+				yb = ya;
+				break;
+			case NORTHEAST:
+				xa = (a.x + a.width);
+				ya = a.y;
+				xb = (b == null) ? xa + 1 : b.x;
+				yb = (b == null) ? ya - 1 : (b.y + b.height);
+				break;
+			case NORTHWEST:
+				xa = a.x;
+				ya = a.y;
+				xb = (b == null) ? xa - 1 : (b.x + b.width);
+				yb = (b == null) ? ya - 1 : (b.y + b.height);
+				break;
+			case SOUTHEAST:
+				xa = (a.x + a.width);
+				ya = (a.y + a.height);
+				xb = (b == null) ? xa + 1 : b.x;
+				yb = (b == null) ? ya + 1 : b.y;
+				break;
+			case SOUTHWEST:
+				xa = a.x;
+				ya = (a.y + a.height);
+				xb = (b == null) ? xa - 1 : (b.x + b.width);
+				yb = (b == null) ? ya + 1 : b.y;
+				break;
+		}
+        return new Rectangle(Math.min(xa, xb), Math.min(ya, yb), Math.abs(xa - xb), Math.abs(ya - yb));
 	}
 	
 	@Override

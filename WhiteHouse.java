@@ -67,7 +67,9 @@ public class WhiteHouse
 		final TranscriptWatcher watcher = new TranscriptWatcher(transcript, manager, canvas);
 		watcher.start();
 		
-		canvas.addMouseListener(new InteractionManager(manager));
+        InteractionManager listener = new InteractionManager(manager);
+		canvas.addMouseListener(listener);
+        canvas.addMouseMoveListener(listener);
 		
 		// Create and register PaintManager
 		final PaintManager paint = new PaintManager(manager);
