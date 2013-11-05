@@ -73,14 +73,17 @@ public class PaintManager implements PaintListener
 
 		e.gc.setLineWidth(2);
 		
-		// Draw rooms and connections. All of it. Should
-		// probably use the clipping.
+		// Draw rooms and connections.
 		e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_BLACK));
 
 		Collection<Room> rooms = manager.getFloor(manager.floor);
 		Iterator<Room> iterator = rooms.iterator();
 		while (iterator.hasNext())
-			drawRoom(iterator.next(), e.gc);
+        {
+            Room room = iterator.next();
+            if (room.intersects(e.x, e.y, e.width, e.height))
+                drawRoom(room, e.gc);
+        }
 		
 		// Reset flags for text paint
 		manager.painted();
