@@ -43,7 +43,7 @@ public class WhiteHouse
 		shell.setText("WhiteHouse");
 
 		final ScrolledComposite scroll = new ScrolledComposite(shell, SWT.H_SCROLL | SWT.V_SCROLL);
-		final Canvas canvas = new Canvas(scroll, SWT.NONE);
+		final Canvas canvas = new Canvas(scroll, SWT.DOUBLE_BUFFERED);
 		canvas.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
 		scroll.setContent(canvas);
 		canvas.setBounds(area);
