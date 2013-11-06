@@ -22,12 +22,15 @@ package com.github.redhatter.whitehouse;
 import java.awt.Shape;
 import java.awt.Rectangle;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Control;
 
-class InteractionManager implements MouseListener, MouseMoveListener
+class InteractionManager implements MouseListener, MouseMoveListener, KeyListener
 {
 	private enum Mode
 	{
@@ -51,9 +54,7 @@ class InteractionManager implements MouseListener, MouseMoveListener
         mode = Mode.NONE;
 	}
 	
-	public void mouseDoubleClick (MouseEvent e)
-	{
-	}
+	public void mouseDoubleClick (MouseEvent e) {}
 	
 	public void mouseDown (MouseEvent e)
 	{
@@ -196,4 +197,16 @@ class InteractionManager implements MouseListener, MouseMoveListener
 			connection.add(e.x, e.y);
 		}
 	}
+	
+	public void keyPressed(KeyEvent e)
+	{
+		if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS)
+		{
+			manager.deleteElement(manager.selection);
+			manager.selection = null;
+			((Control)e.widget).redraw();
+		}
+	}
+	
+	public void keyReleased(KeyEvent e) {}
 }

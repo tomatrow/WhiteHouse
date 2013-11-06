@@ -70,6 +70,7 @@ public class WhiteHouse
         InteractionManager listener = new InteractionManager(manager);
 		canvas.addMouseListener(listener);
         canvas.addMouseMoveListener(listener);
+		canvas.addKeyListener(listener);
 		
 		// Create and register PaintManager
 		final PaintManager paint = new PaintManager(manager);

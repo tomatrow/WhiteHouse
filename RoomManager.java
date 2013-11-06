@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Canvas;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Iterator;
 import java.awt.Shape;
 import java.awt.Rectangle;
@@ -41,7 +41,7 @@ public class RoomManager
 {
 	// List of all rooms, what we draw on,
 	// and the space between rooms
-	private Collection<Room> rooms = new HashSet<Room>();
+	private Collection<Room> rooms = new LinkedList<Room>();
 	private Shell shell;
 	private Canvas canvas;
 	private int SPACE = 40;
@@ -280,7 +280,7 @@ public class RoomManager
 	
 	public Collection<Room> getFloor (int z)
 	{
-		Collection<Room> list = new HashSet<Room>();
+		Collection<Room> list = new LinkedList<Room>();
 		Iterator<Room> iterator = rooms.iterator();
 		while (iterator.hasNext())
 		{
@@ -290,6 +290,25 @@ public class RoomManager
 		}
 		
 		return list;
+	}
+	
+	public void deleteElement (Shape element)
+	{
+		if (element instanceof Room)
+		{
+			Room room = (Room)element;
+			for (Compass dir : Compass.values())
+			{
+				Room neighbor = room.getNeighbor(dir);
+				if (neighbor != null)
+					neighbor.setNeighbor(Compass.invert(dir), null);
+			}
+			rooms.remove(element);
+		}
+		else if (element instanceof Connection)
+		{
+			((Connection)element).delete();
+		}
 	}
 	
 	private Room findRoom (String name, String desc)

@@ -51,6 +51,13 @@ class Connection implements Shape
 		this.aSide = aSide;
 		a.setConnection(aSide, this);
 	}
+
+	public void delete ()
+	{
+		a.setConnection(aSide, null);
+		if (b != null)
+			b.setConnection(bSide, null);
+	}
 	
 	public void setb (Room b, Compass bSide)
 	{
