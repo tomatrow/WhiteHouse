@@ -261,6 +261,7 @@ public class RoomManager
 	public Shape findElement (int x, int y)
 	{
 		Iterator<Room> iterator = rooms.iterator();
+		Shape element = null;
 		while (iterator.hasNext())
 		{
 			Room room = iterator.next();
@@ -271,11 +272,11 @@ public class RoomManager
 			{
 				Connection connection = room.getConnection(dir);
 				if (connection != null && connection.contains(x, y, 10))
-					return connection;
+					element = connection;
 			}
 		}
 		
-		return null;
+		return element;
 	}
 	
 	public Collection<Room> getFloor (int z)
