@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$(uname)" == "Darwin" ]; then
-    PARAM="$PARAM -XstartOnFirstThread"
+    PARAM="$PARAM -XstartOnFirstThread "
     if [ "$(uname -m)" = "x86_64" ]; then
         SWT="lib/swt-mac64.jar"
     else
@@ -16,12 +16,12 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 fi
 
 echo "Using library $SWT ..."
-if [ -n "$PARAM" ]
+if [ -n "$PARAM" ]; then
     echo "Using parameters $PARAM ..."
 fi
 
-if [ "$1" == "compile" ]
+if [ "$1" == "compile" ]; then
     javac $PARAM -cp .:$SWT -d . *.java
-elif [ "$1" == "run" ]
+elif [ "$1" == "run" ]; then	
     java $PARAM -cp .:$SWT com.github.redhatter.whitehouse.WhiteHouse
 fi
